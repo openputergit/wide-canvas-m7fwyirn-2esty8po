@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrugDiscovery AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .clay-morphism {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            box-shadow: 
+                20px 20px 60px #bebebe,
+                -20px -20px 60px #ffffff;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        body {
+            background: linear-gradient(135deg, #e0f2ff 0%, #c8e6f5 100%);
+            min-height: 100vh;
+        }
+        .molecule-viewer {
+            min-height: 400px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-7xl mx-auto">
+        <header class="clay-morphism p-6 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 text-center">DrugDiscovery AI</h1>
+            <p class="text-center text-gray-600 mt-2">Advanced Molecular Analysis & Drug Design System</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="clay-morphism p-6">
+                <h2 class="text-xl font-semibold mb-4">Patient Information</h2>
+                <textarea id="patientInfo" class="w-full p-4 rounded-lg border-2 border-blue-100 h-48 focus:outline-none focus:border-blue-300" placeholder="Enter patient symptoms and medical history..."></textarea>
+                <button onclick="analyzePacient()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition duration-300 w-full clay-morphism">Analyze & Generate Compounds</button>
+            </div>
+
+            <div class="clay-morphism p-6">
+                <h2 class="text-xl font-semibold mb-4">Molecule Viewer</h2>
+                <div id="moleculeViewer" class="molecule-viewer rounded-lg clay-morphism flex items-center justify-center">
+                    <p class="text-gray-500">Molecule visualization will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 clay-morphism p-6">
+            <h2 class="text-xl font-semibold mb-4">Generated Compounds</h2>
+            <div id="results" class="space-y-4">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/3dmol/build/3Dmol-min.js"></script>
+    <script>
+        function analyzePacient() {
+            const patientInfo = document.getElementById('patientInfo').value;
+            if (!patientInfo.trim()) {
+                alert('Please enter patient information');
+                return;
+            }
+
+            // Simulated API response
+            const mockResponse = {
+                molecules: [
+                    {
+                        smiles: "CC(=O)Oc1ccccc1C(=O)O",
+                        formula: "C9H8O4",
+                        therapeutic_uses: "Pain relief, fever reduction, inflammation",
+                        existing_medications: "Aspirin",
+                        mechanism_of_action: "Inhibits cyclooxygenase (COX) enzymes",
+                        side_effects: "Stomach irritation, bleeding",
+                        target_proteins: ["COX-1", "COX-2"]
+                    }
+                ]
+            };
+
+            displayResults(mockResponse);
+            initializeMoleculeViewer(mockResponse.molecules[0].smiles);
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            data.molecules.forEach(molecule => {
+                const moleculeCard = document.createElement('div');
+                moleculeCard.className = 'clay-morphism p-4 rounded-lg';
+                moleculeCard.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg">${molecule.existing_medications}</h3>
+                            <p class="text-sm text-gray-600">Formula: ${molecule.formula}</p>
+                            <p class="text-sm text-gray-600">SMILES: ${molecule.smiles}</p>
+                        </div>
+                        <div>
+                            <p><strong>Therapeutic Uses:</strong> ${molecule.therapeutic_uses}</p>
+                            <p><strong>Mechanism:</strong> ${molecule.mechanism_of_action}</p>
+                            <p><strong>Side Effects:</strong> ${molecule.side_effects}</p>
+                            <p><strong>Targets:</strong> ${molecule.target_proteins.join(', ')}</p>
+                        </div>
+                    </div>
+                    <button onclick="viewMolecule('${molecule.smiles}')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-1 px-4 rounded-lg transition duration-300">
+                        View Structure
+                    </button>
+                `;
+                resultsDiv.appendChild(moleculeCard);
+            });
+        }
+
+        function initializeMoleculeViewer(smiles) {
+            const viewer = document.getElementById('moleculeViewer');
+            viewer.innerHTML = `<iframe src="https://molview.org/?smiles=${encodeURIComponent(smiles)}" width="100%" height="400" frameborder="0"></iframe>`;
+        }
+
+        function viewMolecule(smiles) {
+            initializeMoleculeViewer(smiles);
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
